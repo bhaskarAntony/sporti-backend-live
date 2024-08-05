@@ -70,7 +70,7 @@ const calculateTotalServiceCost = (formData) => {
     let baseCost = 0;
 
     // Determine the base cost based on serviceName and serviceType
-    if (formData.serviceName === 'main function hall') {
+    if ((formData.serviceName).toLowerCase() === 'main function hall') {
         switch (formData.serviceType) {
             case 'Others':
                 baseCost = 45000;
@@ -84,7 +84,7 @@ const calculateTotalServiceCost = (formData) => {
             default:
                 baseCost = 0;
         }
-    } else if (formData.serviceName === 'Conference Room') {
+    } else if ((formData.serviceName).toLowerCase() === 'conference room') {
         switch (formData.serviceType) {
             case 'Others':
                 baseCost = 15000;
@@ -98,7 +98,7 @@ const calculateTotalServiceCost = (formData) => {
             default:
                 baseCost = 0;
         }
-    } else if (formData.serviceName === 'Barbeque Area') {
+    } else if ((formData.serviceName).toLowerCase() === 'barbeque area') {
         switch (formData.serviceType) {
             case 'Others':
                 baseCost = 10000;
@@ -147,7 +147,7 @@ const submitServiceForm = async (req, res) => {
 
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        sendSMS(`Hello ${formData.username},, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo} view your request https://sporti.ksp.gov.in/payment/${formData.applicationNo}`, formData.phoneNumber);
         res.json({ success: true, user: booking });
     } catch (error) {
         console.error('Error submitting service form:', error);
