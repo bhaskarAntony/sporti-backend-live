@@ -29,6 +29,10 @@ const BookingSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    numberOfDays:{
+        type:Number,
+        default:0
+    }
 
 });
 

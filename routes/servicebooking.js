@@ -1,10 +1,11 @@
 const express = require('express');
-const { submitForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
+const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
 const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
 
-router.post('/book', submitForm);
+router.post('/service/book', submitServiceForm);
+router.post('/room/book', submitRoomForm);
 router.get('/booking/:applicationNo', getBookingByApplicationNo);
 router.delete('/delete/booking/:applicationNo', deleteBooking);
 router.put('/update/booking/:applicationNo', updateBooking);
