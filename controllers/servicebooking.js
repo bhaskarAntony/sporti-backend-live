@@ -108,7 +108,7 @@ const submitRoomForm = async (req, res) => {
         
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`Your booking request has been sent to admin... ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
 
         res.json({ success: true, user: booking });
     } catch (error) {
@@ -133,7 +133,7 @@ const submitServiceForm = async (req, res) => {
         
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`Hello ${formData.username}, Your booking request has been sent to admin... ApplicationNo is ${formData.applicationNo}. View your request: https://sporti.ksp.gov.in/payment/${formData.applicationNo}`, formData.phoneNumber);
+        sendSMS(`hello ${formData.username},  Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
 
         res.json({ success: true, user: booking });
     } catch (error) {
