@@ -1,58 +1,45 @@
-const Booking = require('../models/servicesBooking');
-const emailService = require('../services/emailService');
-const { v4: uuidv4 } = require('uuid');
+const express = require('express');
+const { body, validationResult } = require('express-validator');
+const Joi = require('joi');
 const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
-const sendSMS = require('../s')
+const uuidv4 = require('uuid').v4;
+const Booking = require('../models/servicesBooking');
+const emailService = require('../services/emailService');
+const sendSMS = require('../s'); // Adjust the path as necessary
 
+// Sanitize input
 function sanitizeInput(input) {
     const window = new JSDOM('').window;
     return DOMPurify.sanitize(input, { USE_PROFILES: { html: true }, window });
 }
 
+// Generate a short unique ID
 function generateShortUniqueId() {
-    // Generate a random number between 10000 and 99999
     const randomNumber = Math.floor(10000 + Math.random() * 90000);
-    
-    // Generate a UUID
     const uuid = uuidv4();
-    
-    // Extract the last 4 characters from the UUID
     const uuidSuffix = uuid.slice(-4);
-
-    // Concatenate the random number and UUID suffix
     return `${randomNumber}${uuidSuffix}`;
 }
 
+// Calculate total room cost
 const calculateTotalRoomCost = (formData) => {
     let roomPrice = 0;
     switch (formData.roomType) {
         case 'Family':
-            if (formData.guestType === 'Officers from Karnataka') {
-                roomPrice = 1600;
-            } else if (formData.guestType === 'Officers from Other States') {
-                roomPrice = 2100;
-            } else if (formData.guestType === 'Serving and Senior Police Officers') {
-                roomPrice = 1600;
-            }
+            roomPrice = formData.guestType === 'Officers from Karnataka' ? 1600 :
+                        formData.guestType === 'Officers from Other States' ? 2100 :
+                        formData.guestType === 'Serving and Senior Police Officers' ? 1600 : 0;
             break;
         case 'VIP':
-            if (formData.guestType === 'Officers from Karnataka') {
-                roomPrice = 1300;
-            } else if (formData.guestType === 'Officers from Other States') {
-                roomPrice = 1600;
-            } else if (formData.guestType === 'Serving and Senior Police Officers') {
-                roomPrice = 2700;
-            }
+            roomPrice = formData.guestType === 'Officers from Karnataka' ? 1300 :
+                        formData.guestType === 'Officers from Other States' ? 1600 :
+                        formData.guestType === 'Serving and Senior Police Officers' ? 2700 : 0;
             break;
         case 'Standard':
-            if (formData.guestType === 'Officers from Karnataka') {
-                roomPrice = 800;
-            } else if (formData.guestType === 'Officers from Other States') {
-                roomPrice = 1100;
-            } else if (formData.guestType === 'Serving and Senior Police Officers') {
-                roomPrice = 1600;
-            }
+            roomPrice = formData.guestType === 'Officers from Karnataka' ? 800 :
+                        formData.guestType === 'Officers from Other States' ? 1100 :
+                        formData.guestType === 'Serving and Senior Police Officers' ? 1600 : 0;
             break;
         default:
             roomPrice = 0;
@@ -66,95 +53,96 @@ const calculateTotalRoomCost = (formData) => {
     return roomPrice * formData.noGuests * diffDays;
 };
 
+// Calculate total service cost
 const calculateTotalServiceCost = (formData) => {
     let baseCost = 0;
-
-    // Determine the base cost based on serviceName and serviceType
     if ((formData.serviceName).toLowerCase() === 'main function hall') {
-        switch (formData.serviceType) {
-            case 'Others':
-                baseCost = 45000;
-                break;
-            case 'Senior Police Officers of Other Govt Department':
-                baseCost = 25000;
-                break;
-            case 'Serving and Senior Police Officers':
-                baseCost = 2000;
-                break;
-            default:
-                baseCost = 0;
-        }
+        baseCost = formData.serviceType === 'Others' ? 45000 :
+                    formData.serviceType === 'Senior Police Officers of Other Govt Department' ? 25000 :
+                    formData.serviceType === 'Serving and Senior Police Officers' ? 2000 : 0;
     } else if ((formData.serviceName).toLowerCase() === 'conference room') {
-        switch (formData.serviceType) {
-            case 'Others':
-                baseCost = 15000;
-                break;
-            case 'Senior Police Officers of Other Govt Department':
-                baseCost = 10000;
-                break;
-            case 'Serving and Senior Police Officers':
-                baseCost = 7500;
-                break;
-            default:
-                baseCost = 0;
-        }
+        baseCost = formData.serviceType === 'Others' ? 15000 :
+                    formData.serviceType === 'Senior Police Officers of Other Govt Department' ? 10000 :
+                    formData.serviceType === 'Serving and Senior Police Officers' ? 7500 : 0;
     } else if ((formData.serviceName).toLowerCase() === 'barbeque area') {
-        switch (formData.serviceType) {
-            case 'Others':
-                baseCost = 10000;
-                break;
-            case 'Senior Police Officers of Other Govt Department':
-                baseCost = 7500;
-                break;
-            case 'Serving and Senior Police Officers':
-                baseCost = 5000;
-                break;
-            default:
-                baseCost = 0;
-        }
+        baseCost = formData.serviceType === 'Others' ? 10000 :
+                    formData.serviceType === 'Senior Police Officers of Other Govt Department' ? 7500 :
+                    formData.serviceType === 'Serving and Senior Police Officers' ? 5000 : 0;
     }
-
     return baseCost * formData.numberOfDays;
 };
 
+// Validation middleware for booking form
+const validateBookingForm = [
+    // body('roomType').isIn(['Family', 'VIP', 'Standard']),
+    body('guestType').isIn(['Officers from Karnataka', 'Officers from Other States', 'Serving and Senior Police Officers']),
+    body('checkIn').isISO8601().toDate(),
+    body('checkOut').isISO8601().toDate(),
+    body('noGuests').isInt({ min: 1 }),
+    body('phoneNumber').isMobilePhone()
+];
+
+const validateBookingForm2 = [
+    // body('roomType').isIn(['Family', 'VIP', 'Standard']),
+    body('serviceType').isIn(['Others', 'Senior Police Officers of Other Govt Department', 'Serving and Senior Police Officers']),
+    body('serviceName').isIn(['main function hall', 'conference room', 'barbeque area']),
+    body('eventdate').isISO8601().toDate(),
+    // body('checkOut').isISO8601().toDate(),
+    body('noGuests').isInt({ min: 1 }),
+    body('phoneNumber').isMobilePhone()
+];
+
+// Submit room form
 const submitRoomForm = async (req, res) => {
+    await Promise.all(validateBookingForm.map(validation => validation.run(req)));
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const formData = req.body;
-
         formData.applicationNo = generateShortUniqueId();
         formData.totalCost = calculateTotalRoomCost(formData);
-console.log(calculateTotalRoomCost(formData));
-
+        
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        sendSMS(`Your booking request has been sent to admin... ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
 
         res.json({ success: true, user: booking });
     } catch (error) {
-        console.error('Error submitting room form:', error);
+        console.error('Error submitting room form:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while submitting the room form.' });
     }
 };
 
+// Submit service form
 const submitServiceForm = async (req, res) => {
+    await Promise.all(validateBookingForm2.map(validation => validation.run(req)));
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const formData = req.body;
-
         formData.applicationNo = generateShortUniqueId();
         formData.totalCost = calculateTotalServiceCost(formData);
-        console.log(calculateTotalServiceCost(formData));
         
-
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`Hello ${formData.username},, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo} view your request https://sporti.ksp.gov.in/payment/${formData.applicationNo}`, formData.phoneNumber);
+        sendSMS(`Hello ${formData.username}, Your booking request has been sent to admin... ApplicationNo is ${formData.applicationNo}. View your request: https://sporti.ksp.gov.in/payment/${formData.applicationNo}`, formData.phoneNumber);
+
         res.json({ success: true, user: booking });
     } catch (error) {
-        console.error('Error submitting service form:', error);
+        console.error('Error submitting service form:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while submitting the service form.' });
     }
 };
 
+// Update booking
 const updateBooking = async (req, res) => {
     try {
         const { applicationNo } = req.params;
@@ -176,11 +164,12 @@ const updateBooking = async (req, res) => {
 
         res.json({ success: true, updatedBooking });
     } catch (error) {
-        console.error('Error updating booking:', error);
+        console.error('Error updating booking:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while updating the booking.' });
     }
 };
 
+// Delete booking
 const deleteBooking = async (req, res) => {
     try {
         const { applicationNo } = req.params;
@@ -193,11 +182,12 @@ const deleteBooking = async (req, res) => {
 
         res.json({ success: true, deletedBooking });
     } catch (error) {
-        console.error('Error deleting booking:', error);
+        console.error('Error deleting booking:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while deleting the booking.' });
     }
 };
 
+// Get booking by application number
 const getBookingByApplicationNo = async (req, res) => {
     try {
         const { applicationNo } = req.params;
@@ -210,7 +200,7 @@ const getBookingByApplicationNo = async (req, res) => {
 
         res.json({ success: true, booking });
     } catch (error) {
-        console.error('Error retrieving booking:', error);
+        console.error('Error retrieving booking:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while retrieving the booking.' });
     }
 };
@@ -221,7 +211,7 @@ const allBookings = async (req, res) => {
         const allBookings = await Booking.find();
         res.status(200).json(allBookings);
     } catch (error) {
-        console.error(error);
+        console.error('Error retrieving all bookings:', error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -232,29 +222,29 @@ const pendingBookings = async (req, res) => {
         const pendingBookings = await Booking.find({ status: 'pending' });
         res.status(200).json(pendingBookings);
     } catch (error) {
-        console.error(error);
+        console.error('Error retrieving pending bookings:', error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-// Accept or reject a booking
+// Confirm bookings
 const confirmBookings = async (req, res) => {
     try {
-        const bookingId = req.params.id;
-        const updatedBooking = await Booking.findByIdAndUpdate(bookingId, { status: 'confirmed' }, { new: true });
-        res.status(200).json(updatedBooking);
+        const confirmedBookings = await Booking.updateMany({ status: 'pending' }, { $set: { status: 'confirmed' } });
+        res.status(200).json(confirmedBookings);
     } catch (error) {
-        console.error(error);
+        console.error('Error confirming bookings:', error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
 
+// Export functions
 module.exports = {
-    updateBooking,
     submitRoomForm,
     submitServiceForm,
-    getBookingByApplicationNo,
+    updateBooking,
     deleteBooking,
+    getBookingByApplicationNo,
     allBookings,
     pendingBookings,
     confirmBookings

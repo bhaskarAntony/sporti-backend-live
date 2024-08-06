@@ -1,11 +1,22 @@
+const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+require('dotenv').config();
 
+// Rate limiter middleware for login
+const loginRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: 'Too many login attempts, please try again later.'
+});
+
+// Register route
 const register = async (req, res) => {
   const { name, email, password } = req.body;
-  if (email.length > 30 || password.length > 30 || name.length > 40) {
-    return res.status(400).json({ error: 'Invalid input length' });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
   try {
     const existingUser = await User.findOne({ email });
@@ -23,7 +34,8 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+// Login route with rate limiting
+const login = [loginRateLimiter, async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -48,10 +60,23 @@ const login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });
   }
-};
+}];
 
-const validateToken = (req, res) => {
-  res.status(200).json({ user: req.user });
+// Token validation middleware
+const validateToken = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+    
+    req.user = decoded;
+    next();
+  });
 };
 
 module.exports = { register, login, validateToken };
