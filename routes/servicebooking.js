@@ -2,7 +2,7 @@ const express = require('express');
 const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
-const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
+const { sendrejectionEmail, sendConfirmationEmail, sendServiceConfirmationEmail } = require('../services/emailService');
 const sendSMS = require('../s')
 
 router.post('/service/book', submitServiceForm);
@@ -23,7 +23,7 @@ router.patch('/:id/reject', async (req, res) => {
         booking.status = 'rejected';
         booking.rejectionReason = rejectionReason;
         sendrejectionEmail(booking)
-        sendSMS(`Hello ${booking.username},  Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
+        sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
         await booking.save();
         res.json(booking);
     } catch (err) {
@@ -34,7 +34,7 @@ router.patch('/:id/reject', async (req, res) => {
 router.post('/resend/:phone/:name', async() => {
     const data = req.body;
     try{
-        await sendSMS(`hello ${data.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${data.applicationNo}`, data.phoneNumber);
+        await sendSMS(`hello ${data.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for ${data.applicationNo}`, data.phoneNumber);
         res.status(200).json({message:"sms done"})
     }catch(err){
         res.status(500).json({message:'not send', error:err})
@@ -50,8 +50,12 @@ router.patch('/:id/confirm', async (req, res) => {
         }
 
         booking.status = 'confirmed';
-        sendConfirmationEmail(booking)
-        sendSMS(`Hello ${booking.username},  Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
+        if(booking.serviceName=="Room Booking"){
+            sendServiceConfirmationEmail(booking)
+        }else{
+            sendConfirmationEmail(booking)
+        }
+        sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here
