@@ -50,11 +50,7 @@ router.patch('/:id/confirm', async (req, res) => {
         }
 
         booking.status = 'confirmed';
-        if(booking.serviceName=="Room Booking"){
-            sendServiceConfirmationEmail(booking)
-        }else{
-            sendConfirmationEmail(booking)
-        }
+        sendConfirmationEmail(booking)
         sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
         await booking.save();
         // Send email to user
