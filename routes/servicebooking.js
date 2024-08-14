@@ -31,6 +31,16 @@ router.patch('/:id/reject', async (req, res) => {
     }
 });
 
+router.post('/resend/:phone/:name', async() => {
+    const data = req.body;
+    try{
+        await sendSMS(`hello ${data.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${data.applicationNo}`, data.phoneNumber);
+        res.status(200).json({message:"sms done"})
+    }catch(err){
+        res.status(500).json({message:'not send', error:err})
+    }
+})
+
 // Confirm a booking
 router.patch('/:id/confirm', async (req, res) => {
     try {
@@ -38,13 +48,13 @@ router.patch('/:id/confirm', async (req, res) => {
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
         }
+
         booking.status = 'confirmed';
         sendConfirmationEmail(booking)
-      
+        sendSMS(`Hello ${booking.username},  Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here
-
         res.json(booking);
     } catch (err) {
         res.status(500).json({ message: err.message });
