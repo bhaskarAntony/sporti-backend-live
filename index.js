@@ -76,7 +76,7 @@ app.use(cors({
     'https://www.sporti.ksp.gov.in/login',
     'https://sporti-admin.vercel.app/login',
     'https://sporti-admin.vercel.app/dashboard',
-    'https://sporti-admin.vercel.app/bookings'
+    'https://sporti-admin.vercel.app/bookings',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true

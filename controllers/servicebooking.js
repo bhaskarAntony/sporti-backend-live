@@ -75,7 +75,7 @@ const calculateTotalServiceCost = (formData) => {
 // Validation middleware for booking form
 const validateBookingForm = [
     // body('roomType').isIn(['Family', 'VIP', 'Standard']),
-    body('guestType').isIn(['Officers from Karnataka', 'Officers from Other States', 'Serving and Senior Police Officers']),
+    body('serviceType').isIn(['Officers from Karnataka', 'Officers from Other States', 'Serving and Senior Police Officers']),
     body('checkIn').isISO8601().toDate(),
     body('checkOut').isISO8601().toDate(),
     body('noGuests').isInt({ min: 1 }),

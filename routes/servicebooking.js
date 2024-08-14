@@ -3,6 +3,7 @@ const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBook
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
 const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
+const sendSMS = require('../s')
 
 router.post('/service/book', submitServiceForm);
 router.post('/room/book', submitRoomForm);
@@ -22,6 +23,7 @@ router.patch('/:id/reject', async (req, res) => {
         booking.status = 'rejected';
         booking.rejectionReason = rejectionReason;
         sendrejectionEmail(booking)
+        sendSMS(`Hello ${booking.username},  Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
         await booking.save();
         res.json(booking);
     } catch (err) {
@@ -38,6 +40,7 @@ router.patch('/:id/confirm', async (req, res) => {
         }
         booking.status = 'confirmed';
         sendConfirmationEmail(booking)
+      
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here
