@@ -2,7 +2,7 @@ const express = require('express');
 const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
-const { sendrejectionEmail, sendConfirmationEmail, sendServiceConfirmationEmail } = require('../services/emailService');
+const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
 const sendSMS = require('../s')
 
 router.post('/service/book', submitServiceForm);
@@ -31,11 +31,11 @@ router.patch('/:id/reject', async (req, res) => {
     }
 });
 
-router.post('/resend/:phone/:name', async() => {
-    const data = req.body;
+router.post('/resend/:phone/:name/:applicationNo', async() => {
+    const data = req.paramas;
     try{
-        await sendSMS(`hello ${data.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for ${data.applicationNo}`, data.phoneNumber);
-        res.status(200).json({message:"sms done"})
+        await sendSMS(`hello ${data.name}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for ${data.applicationNo}`, data.phone);
+        res.status(200).json({message:"sms done"});
     }catch(err){
         res.status(500).json({message:'not send', error:err})
     }

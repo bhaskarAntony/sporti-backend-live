@@ -15,6 +15,7 @@ const BookingSchema = new mongoose.Schema({
     serviceType: String,
     roomType:String,
     noGuests:String,
+    guestType:String,
     paymentStatus: {
         type: String,
         default: 'Pending'

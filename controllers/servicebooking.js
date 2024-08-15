@@ -245,7 +245,4 @@ module.exports = {
     updateBooking,
     deleteBooking,
     getBookingByApplicationNo,
-    allBookings,
-    pendingBookings,
-    confirmBookings
 };
