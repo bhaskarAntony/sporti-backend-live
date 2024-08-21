@@ -4,7 +4,7 @@ const router = express.Router();
 const Booking = require('../models/servicesBooking');
 const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
 const sendSMS = require('../s');
-const { sendRejectSMS } = require('../sms');
+const { sendRejectSMS, sendSMSConfirmService } = require('../sms');
 
 router.post('/service/book', submitServiceForm);
 router.post('/room/book', submitRoomForm);
