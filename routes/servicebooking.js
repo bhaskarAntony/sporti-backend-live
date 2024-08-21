@@ -3,7 +3,8 @@ const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBook
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
 const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
-const sendSMS = require('../s')
+const sendSMS = require('../s');
+const { sendRejectSMS } = require('../sms');
 
 router.post('/service/book', submitServiceForm);
 router.post('/room/book', submitRoomForm);
@@ -23,7 +24,8 @@ router.patch('/:id/reject', async (req, res) => {
         booking.status = 'rejected';
         booking.rejectionReason = rejectionReason;
         sendrejectionEmail(booking)
-        sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
+        // sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
+        sendRejectSMS(booking.phoneNumber);
         await booking.save();
         res.json(booking);
     } catch (err) {
@@ -50,8 +52,9 @@ router.patch('/:id/confirm', async (req, res) => {
         }
 
         booking.status = 'confirmed';
-        sendConfirmationEmail(booking)
+        // sendConfirmationEmail(booking)
         sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
+        sendSMSConfirmService(booking.phoneNumber, booking.eventdate)
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here

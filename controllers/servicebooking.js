@@ -7,6 +7,7 @@ const uuidv4 = require('uuid').v4;
 const Booking = require('../models/servicesBooking');
 const emailService = require('../services/emailService');
 const sendSMS = require('../s'); // Adjust the path as necessary
+const { sendPendingSMS } = require('../sms');
 
 // Sanitize input
 function sanitizeInput(input) {
@@ -108,7 +109,9 @@ const submitRoomForm = async (req, res) => {
         
         const booking = new Booking(formData);
         await booking.save();
-        sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        // sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+
+        sendPendingSMS(formData.phoneNumber);
 
         res.json({ success: true, user: booking });
     } catch (error) {
@@ -132,8 +135,10 @@ const submitServiceForm = async (req, res) => {
         formData.totalCost = calculateTotalServiceCost(formData);
         
         const booking = new Booking(formData);
+        
         await booking.save();
-        sendSMS(`hello ${formData.username},  Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        // sendSMS(`hello ${formData.username},  Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        sendPendingSMS(formData.phoneNumber);
 
         res.json({ success: true, user: booking });
     } catch (error) {
