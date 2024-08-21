@@ -14,6 +14,8 @@ router.put('/update/booking/:applicationNo', updateBooking);
 // routes/bookings.js
 
 // Reject a booking
+
+
 router.patch('/:id/reject', async (req, res) => {
     try {
         const { rejectionReason } = req.body;
@@ -53,8 +55,9 @@ router.patch('/:id/confirm', async (req, res) => {
 
         booking.status = 'confirmed';
         // sendConfirmationEmail(booking)
-        sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
-        sendSMSConfirmService(booking.phoneNumber, booking.eventdate)
+        // sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
+        const date = new Date(booking.eventdate)
+        sendSMSConfirmService(booking.phoneNumber, date.toISOString().split('T')[0]);
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here
