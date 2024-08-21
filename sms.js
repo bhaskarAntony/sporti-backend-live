@@ -80,5 +80,5 @@ function SHA1(data) {
 
 
 module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService}
-// sendSMSConfirmService('9606729320', '01/01/2024')
+// sendSMSConfirmService('9481090986', '01/01/2024')
 

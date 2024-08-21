@@ -56,8 +56,8 @@ router.patch('/:id/confirm', async (req, res) => {
         booking.status = 'confirmed';
         // sendConfirmationEmail(booking)
         // sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
-        const date = new Date(booking.eventdate)
-        sendSMSConfirmService(booking.phoneNumber, date.toISOString().split('T')[0]);
+        // const date = new Date(booking.eventdate)
+        sendSMSConfirmService(booking.phoneNumber, booking.eventdate);
         await booking.save();
         // Send email to user
         // You need to implement email sending logic here
