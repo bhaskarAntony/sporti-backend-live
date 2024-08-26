@@ -33,6 +33,12 @@ const BookingSchema = new mongoose.Schema({
     numberOfDays:{
         type:Number,
         default:0
+    },
+    selectedRoomNumber:{
+        type:String,
+    },
+    roomId:{
+        type:String,
     }
 
 });

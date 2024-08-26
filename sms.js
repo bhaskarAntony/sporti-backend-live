@@ -2,7 +2,13 @@
 const axios = require('axios');
 const crypto = require('crypto');
 
-
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+};
 // Route to handle SMS sending
 const sendPendingSMS = async ( mobileNumber) => {
     try {
@@ -20,9 +26,16 @@ const sendRejectSMS = async (mobileNumber) => {
     }
 };
 
-const sendSMSConfirmRoom = async (mobileNumber, checkIn, checkOut) => {
+const sendSMSConfirmRoom = async (FormData) => {
     try {
-         await sendSingleSMS(`Dear Sir,Greetings from SPORTI Bengaluru! Thank you for booking with us. Here are the details of your accommodation:No of Rooms: 01,Room No: 207,Check-in Date:${checkIn},Check-out Date: ${checkOut} Please feel free to reach us at +91-8277945903 / 080-22942137.We wish you a pleasant stay!. Team SPORTI`, mobileNumber, '1107172406257095270');
+        const checkInDate = formatDate(FormData.checkIn);
+        const checkOutDate = formatDate(FormData.checkOut);
+        
+        await sendSingleSMS(
+            `Dear Sir, Greetings from SPORTI Bengaluru! Thank you for booking with us. Here are the details of your accommodation: No of Rooms: 01, Room No: 207, Check-in Date: ${checkInDate}, Check-out Date: ${checkOutDate}. Please feel free to reach us at +91-8277945903 / 080-22942137. We wish you a pleasant stay! Team SPORTI`,
+            FormData.mobileNumber,
+            '1107172406257095270'
+        );
     } catch (error) {
         console.error('Error sending SMS:', error);
     }
@@ -35,6 +48,43 @@ const sendSMSConfirmService = async (mobileNumber, date,) => {
         console.error('Error sending SMS:', error);
     }
 };
+
+const confirmRoom = async(FormData) =>{
+    const checkInDate = formatDate(FormData.checkIn);
+    const checkOutDate = formatDate(FormData.checkOut);
+    try {
+        await sendSingleSMS(`Dear Sir/Madam,Greetings from SPORTI, Bengaluru ! Your ROOM BOOKING request has been successfully accepted. Here are details of the accommodation:No of Rooms :${FormData.noGuests} Room no-207 ${FormData.selectedRoomNumber} Check in Date -${checkOutDate}Check out Date-${checkOutDate} Please feel free to reach us on +91-8277945903 /080-22942137 Thank You for booking with us. We wish you a pleasant stay! Team SPORTI. -POLMES`, FormData.phoneNumber, '1107172431076311372')
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+    }
+}
+
+const confirmMainFunctionHall = async(phonenumber) =>{
+    try {
+        await sendSingleSMS(`Dear Sir/Madam, Greetings from SPORTI, Bengaluru!Your booking request for MAIN FUNCTION HALL  has been received and is under evaluation. It takes 24 hours for confirmation. Booking confirmation SMS will be sent to registered mobile number and mail-id.PLEASE WAIT FOR CONFIRMATION SMS.Thank You - TEAM SPORTI.-POLMES`, phonenumber, '1107172431217567465')
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+    }
+}  
+
+const bookRoomSMS = async(phonenumber) =>{
+    try {
+        await sendSingleSMS(`Dear Sir/Madam, Greetings from SPORTI, Bengaluru ! Your ROOM BOOKING request has been received and is under evaluation. It takes 24 hours for confirmation. Booking confirmation SMS will be sent to registered mobile number and mail-id.PLEASE WAIT FOR CONFIRMATION SMS.Thank You - TEAM SPORTI.`, phonenumber, '1107172431016212287')
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+    }
+}  
+
+
+
+//reject sms
+const rejectRoomBookingSMS = async(phonenumber) =>{
+    try {
+        await sendSingleSMS(`Dear Sir/Madam,Greetings from SPORTI, Bengaluru! We regret to inform you that your ROOM BOOKING request cannot be processed at the moment due to non-availability of rooms during the selected dates.We are sorry for inconvenience. Please select different dates and try again later. For any assistance please contact SPORTI Helpdesk -  +91- 8277945903 / 080-22942137.-TEAM SPORTI-POLMES`, phonenumber, '1107172431095757325')
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+    }
+}  
 
 // Function to send a single SMS
 async function sendSingleSMS(message, mobileNumber, templateId) {
@@ -79,6 +129,31 @@ function SHA1(data) {
 
 
 
-module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService}
+module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
 // sendSMSConfirmService('9481090986', '01/01/2024')
-
+// confirmRoom({
+//     "_id": "66c5bdd306e6e80aa12c1b21",
+//     "username": "Bn",
+//     "email": "bhaskar@gmail.com",
+//     "officerDesignation": "IAS",
+//     "officerCadre": "none",
+//     "phoneNumber": "9606729320",
+//     "applicationNo": "90949290c",
+//     "sporti": "SPORTI-1",
+//     "checkIn": "2024-08-21T15:43:00.000Z",
+//     "checkOut": "2024-08-22T15:43:00.000Z",
+//     "serviceName": "Room Booking",
+//     "eventdate": "",
+//     "serviceType": "",
+//     "roomType": "VIP",
+//     "noGuests": "1",
+//     "guestType": "Officers from Karnataka",
+//     "paymentStatus": "Pending",
+//     "totalCost": "1300",
+//     "status": "confirmed",
+//     "rejectionReason": "",
+//     "numberOfDays": 0,
+//     "__v": 0,
+//     "selectedRoomNumber": "03"
+// },'9606729320')
+// rejectRoomBookingSMS('9606729320')

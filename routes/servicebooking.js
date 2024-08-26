@@ -4,7 +4,8 @@ const router = express.Router();
 const Booking = require('../models/servicesBooking');
 const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
 const sendSMS = require('../s');
-const { sendRejectSMS, sendSMSConfirmService } = require('../sms');
+const { sendRejectSMS, sendSMSConfirmService, sendSMSConfirmRoom, confirmRoom, rejectRoomBookingSMS } = require('../sms');
+const Room = require('../models/Room');
 
 router.post('/service/book', submitServiceForm);
 router.post('/room/book', submitRoomForm);
@@ -25,25 +26,26 @@ router.patch('/:id/reject', async (req, res) => {
         }
         booking.status = 'rejected';
         booking.rejectionReason = rejectionReason;
-        sendrejectionEmail(booking)
+        // sendrejectionEmail(booking)
         // sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
-        sendRejectSMS(booking.phoneNumber);
+        if(booking.serviceName == "Room Booking"){
+            rejectRoomBookingSMS(booking.phoneNumber);
+        }
         await booking.save();
-        res.json(booking);
+        const room = await Room.findById(booking.roomId);
+
+        if(!room){
+            return res.status(404).json({error: 'Room id not found' });
+        }
+        room.isBooked = false;
+        room.save();
+        res.json({booking, room});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-router.post('/resend/:phone/:name/:applicationNo', async() => {
-    const data = req.paramas;
-    try{
-        await sendSMS(`hello ${data.name}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for ${data.applicationNo}`, data.phone);
-        res.status(200).json({message:"sms done"});
-    }catch(err){
-        res.status(500).json({message:'not send', error:err})
-    }
-})
+
 
 // Confirm a booking
 router.patch('/:id/confirm', async (req, res) => {
@@ -54,6 +56,7 @@ router.patch('/:id/confirm', async (req, res) => {
         }
 
         booking.status = 'confirmed';
+        booking.roomId=req.params.id;
         // sendConfirmationEmail(booking)
         // sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
         // const date = new Date(booking.eventdate)
@@ -67,6 +70,37 @@ router.patch('/:id/confirm', async (req, res) => {
     }
 });
 
+router.patch('/:id/select-room/:roomId', async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        const { roomNumber } = req.body;
+
+        // Update booking with selected room number
+        booking.selectedRoomNumber = roomNumber;
+        booking.status = 'confirmed';
+        booking.roomId = req.params.roomId;
+        await booking.save();
+
+        // Mark the room as booked
+        var bookedRoom = await Room.findById(req.params.roomId);
+        if(!bookedRoom){
+            return res.status(404).json({error: 'Room id not found' });
+        }
+        bookedRoom.isBooked = true
+        bookedRoom.save();
+        confirmRoom(booking);
+        res.json(booking);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
 // Get all bookings
 router.get('/bookings', async (req, res) => {
     try {
@@ -76,6 +110,23 @@ router.get('/bookings', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+
+router.get('/send/room/sms/:id', async(req, res)=>{
+    const {id} = req.params;
+    try {
+        const booking = await Booking.findById(req.params.id);
+        confirmRoom(booking);
+        res.status(200).json({
+            message:"sms sent"
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"failed to send sms."
+        })
+    }
+})
 
 
 
