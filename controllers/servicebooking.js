@@ -191,13 +191,13 @@ const deleteBooking = async (req, res) => {
       // Find the associated room by roomId
       const room = await Room.findById(booking.roomId);
   
-      if (!room) {
-        return res.status(404).json({ error: 'Room ID not found' });
+      if (room) {
+        room.isBooked = false;
+        await room.save();
       }
   
       // Update the room's isBooked status to false
-      room.isBooked = false;
-      await room.save();
+     
   
       // Delete the booking
       const deletedBooking = await Booking.findOneAndDelete({ applicationNo });

@@ -35,11 +35,12 @@ router.patch('/:id/reject', async (req, res) => {
         await booking.save();
         const room = await Room.findById(booking.roomId);
 
-        if(!room){
-            return res.status(404).json({error: 'Room id not found' });
+        if(room){
+            room.isBooked = false;
+            room.save();
         }
-        room.isBooked = false;
-        room.save();
+
+       
         res.json({booking, room});
     } catch (err) {
         res.status(500).json({ message: err.message });
