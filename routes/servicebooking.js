@@ -2,7 +2,7 @@ const express = require('express');
 const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
-const { sendrejectionEmail, sendConfirmationEmail } = require('../services/emailService');
+const { sendrejectionEmail, sendConfirmationEmail, sendRoomConfirmationEmail, sendRoomRejectEmail } = require('../services/emailService');
 const sendSMS = require('../s');
 const { sendRejectSMS, sendSMSConfirmService, sendSMSConfirmRoom, confirmRoom, rejectRoomBookingSMS } = require('../sms');
 const Room = require('../models/Room');
@@ -30,6 +30,7 @@ router.patch('/:id/reject', async (req, res) => {
         // sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)
         if(booking.serviceName == "Room Booking"){
             rejectRoomBookingSMS(booking.phoneNumber);
+            sendRoomRejectEmail(booking)
         }
         await booking.save();
         const room = await Room.findById(booking.roomId);
@@ -93,6 +94,7 @@ router.patch('/:id/select-room/:roomId', async (req, res) => {
         bookedRoom.isBooked = true
         bookedRoom.save();
         confirmRoom(booking);
+        sendRoomConfirmationEmail(booking)
         res.json(booking);
     } catch (error) {
         res.status(500).json({ message: error.message });

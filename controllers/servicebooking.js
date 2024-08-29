@@ -5,10 +5,10 @@ const DOMPurify = require('dompurify');
 const { JSDOM } = require('jsdom');
 const uuidv4 = require('uuid').v4;
 const Booking = require('../models/servicesBooking');
-const emailService = require('../services/emailService');
 const sendSMS = require('../s'); // Adjust the path as necessary
 const { sendPendingSMS, bookRoomSMS } = require('../sms');
 const Room = require('../models/Room');
+const { sendRoomConfirmationEmail, sendRoomPendingEmail } = require('../services/emailService');
 
 // Sanitize input
 function sanitizeInput(input) {
@@ -113,6 +113,7 @@ const submitRoomForm = async (req, res) => {
         // sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
 
         bookRoomSMS(formData.phoneNumber);
+       sendRoomPendingEmail(formData)
 
         res.json({ success: true, user: booking });
     } catch (error) {

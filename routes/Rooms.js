@@ -39,6 +39,45 @@ router.get('/available/rooms', async (req, res) => {
     }
 });
 
+router.get('/all/rooms', async(req, res)=>{
+    try {
+        const allrooms = await Room.find();
+        res.status(200).json({
+            message:'success',
+            data:allrooms
+        })
+    } catch (error) {
+        res.status(404).json({
+            message:error.message,
+            data:error
+        })
+    }
+})
+
+router.post('/clear/room/:id', async(req, res)=>{
+    const {id} = req.params.id;
+   try {
+    const room = await Room.findById(req.params.id);
+    if(!room){
+        return  res.status(404).json({
+            message:"Room id not found",
+            data:room
+        })
+    }
+    room.isBooked = false;
+    room.save();
+    res.status(200).json({
+        message:"Room is cleared",
+        data:room
+    })
+   } catch (error) {
+    res.status(404).json({
+        message:"Room is cleared",
+        data:error
+    })
+   }
+})
+
 
 router.post('/upload-rooms', async (req, res) => {
     try {
