@@ -20,7 +20,7 @@ exports.sendRoomPendingEmail = (formData) => {
     const mailOptions = {
         from: 'sportigov@gmail.com',
         to: formData.email,
-        subject: 'Room Booking',
+        subject: 'Booking Request',
         html: `
             <!DOCTYPE html>
             <html lang="en">
@@ -62,7 +62,7 @@ exports.sendRoomPendingEmail = (formData) => {
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1>Booking Confirmation</h1>
+                        <h1>Booking Request</h1>
                     </div>
                     <div class="content">
                        
