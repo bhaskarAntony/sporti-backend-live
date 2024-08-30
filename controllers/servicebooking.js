@@ -52,7 +52,7 @@ const calculateTotalRoomCost = (formData) => {
     const diffTime = Math.abs(checkOutDate - checkInDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return roomPrice * formData.noGuests * diffDays;
+    return roomPrice * diffDays;
 };
 
 // Calculate total service cost

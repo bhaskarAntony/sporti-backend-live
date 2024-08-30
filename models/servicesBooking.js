@@ -18,7 +18,6 @@ const BookingSchema = new mongoose.Schema({
     guestType:String,
     paymentStatus: {
         type: String,
-        default: 'Pending'
     },
     totalCost:String,
     status: {

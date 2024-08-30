@@ -78,6 +78,31 @@ router.post('/clear/room/:id', async(req, res)=>{
    }
 })
 
+router.post('/block/room/:id', async (req, res) => {
+    try {
+      const room = await Room.findById(req.params.id);
+  
+      if (!room) {
+        return res.status(404).json({
+          message: "Room not found",
+        });
+      }
+  
+      room.isBooked = true; // Block the room by setting isBooked to true
+      await room.save();
+  
+      res.status(200).json({
+        message: "Room blocked successfully",
+        data: room,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Room blocking failed",
+        data: error,
+      });
+    }
+  });
+
 
 router.post('/upload-rooms', async (req, res) => {
     try {
