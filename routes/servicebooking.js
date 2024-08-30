@@ -25,6 +25,7 @@ router.patch('/:id/reject', async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
         booking.status = 'rejected';
+        booking.paymentStatus = 'pending';
         booking.rejectionReason = rejectionReason;
         // sendrejectionEmail(booking)
         // sendSMS(`Hello ${booking.username},   Your booking request has been cancelled from admin team as you are not eligible for booking services in SPORTI. Thank you.`, booking.phoneNumber)

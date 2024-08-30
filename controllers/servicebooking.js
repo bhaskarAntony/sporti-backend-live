@@ -183,6 +183,7 @@ const deleteBooking = async (req, res) => {
   
       // Find the booking by applicationNo
       const booking = await Booking.findOne({ applicationNo });
+      
   
       if (!booking) {
         return res.status(404).json({ success: false, error: 'Booking not found' });
