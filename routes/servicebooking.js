@@ -2,7 +2,7 @@ const express = require('express');
 const { submitServiceForm, submitRoomForm, getBookingByApplicationNo, deleteBooking, updateBooking } = require('../controllers/servicebooking');
 const router = express.Router();
 const Booking = require('../models/servicesBooking');
-const { sendrejectionEmail, sendConfirmationEmail, sendRoomConfirmationEmail, sendRoomRejectEmail } = require('../services/emailService');
+const { sendrejectionEmail, sendConfirmationEmail, sendRoomConfirmationEmail, sendRoomRejectEmail, sendPaymentEmail } = require('../services/emailService');
 const sendSMS = require('../s');
 const { sendRejectSMS, sendSMSConfirmService, sendSMSConfirmRoom, confirmRoom, rejectRoomBookingSMS } = require('../sms');
 const Room = require('../models/Room');
@@ -63,6 +63,7 @@ router.patch('/:id/confirm', async (req, res) => {
         // sendConfirmationEmail(booking)
         // sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
         // const date = new Date(booking.eventdate)
+        sendPaymentEmail(booking);
         sendSMSConfirmService(booking.phoneNumber, booking.eventdate);
         await booking.save();
         // Send email to user
@@ -137,7 +138,8 @@ router.patch('/:id/select-room/:roomId', async (req, res) => {
         bookedRoom.isBooked = true
         bookedRoom.save();
         confirmRoom(booking);
-        sendRoomConfirmationEmail(booking)
+        sendRoomConfirmationEmail(booking);
+        sendPaymentEmail(booking);
         res.json(booking);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -170,6 +172,14 @@ router.get('/send/room/sms/:id', async(req, res)=>{
         res.status(500).json({
             message:"failed to send sms."
         })
+    }
+})
+
+router.post('/change.room/number/:roomId/:bookingId', async(req, res) =>{
+    try {
+        const booking  =  await Booking.findById(req.params.bookingId)  
+    } catch (error) {
+        
     }
 })
 

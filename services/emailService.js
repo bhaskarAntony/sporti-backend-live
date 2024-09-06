@@ -226,7 +226,7 @@ exports.sendRoomRejectEmail = (formData) => {
 
 exports.sendServiceConfirmationEmail = (formData) => {
     const mailOptions = {
-        from: 'bhaskarbabucm6@gmail.com',
+        from: 'sportigov@gmail.com',
         to: formData.email,
         subject: 'Booking Confirmation',
         html: `
@@ -306,7 +306,7 @@ exports.sendServiceConfirmationEmail = (formData) => {
 
 exports.sendrejectionEmail = (formData) => {
     const mailOptions1 = {
-        from: 'bhaskarbabucm6@gmail.com',
+        from: 'sportigov@gmail.com',
         to: formData.email,
         subject: 'Booking Rejection',
         html: `
@@ -379,9 +379,9 @@ Sorry for the inconvenience. Please contact SPORTI helpdesk for further assistan
 
 
                }
-               exports.sendPendingEmail = (formData) => {
+exports.sendPendingEmail = (formData) => {
                 const mailOptions1 = {
-                    from: 'bhaskarbabucm6@gmail.com',
+                    from: 'sportigov@gmail.com',
                     to: formData.email,
                     subject: 'Booking Information',
                     html: `
@@ -436,6 +436,76 @@ Sorry for the inconvenience. Please contact SPORTI helpdesk for further assistan
                             </div>
                             <div class="footer">
                                 <p>Thank you for choosing our services!</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `                  
+                };
+            
+                transporter.sendMail(mailOptions1, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                    } else {
+                        console.log('Email sent:', info.response);
+                    }
+                });
+            }
+
+            exports.sendPaymentEmail = (formData) => {
+                const mailOptions1 = {
+                    from: 'sportigov@gmail.com',
+                    to: 'bhaskarbabucm6@gmail.com',
+                    subject: 'Payment Link',
+                    html: `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Payment Link</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                line-height: 1.6;
+                            }
+                            .container {
+                                max-width: 600px;
+                                margin: 0 auto;
+                                padding: 20px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                background-color: #f9f9f9;
+                            }
+                            .header {
+                                text-align: center;
+                                padding-bottom: 20px;
+                                border-bottom: 1px solid #ddd;
+                            }
+                            .header h1 {
+                                margin: 0;
+                            }
+                            .content {
+                                padding-top: 20px;
+                            }
+                            .footer {
+                                text-align: center;
+                                padding-top: 20px;
+                                border-top: 1px solid #ddd;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h1>Online Payment For Your Booking</h1>
+                            </div>
+                            <div class="content">
+                                <p>Dear <strong>${formData.username}</strong>,</p>
+                                <p>This is your online payment link: <a href=${`https://sporti.ksp.gov.in/payment/${formData.applicationNo}`}>Pay Now</a></p>
+                            </div>
+                            <div class="footer">
+                                <p>Thank you</p>
                             </div>
                         </div>
                     </body>
