@@ -88,6 +88,7 @@ const adminBookings = require('./routes/adminBooking');
 const bookingRoutes = require('./routes/servicebooking');
 const RoomRoutes = require('./routes/Rooms');
 const FeedbackRoutes = require('./routes/feedback');
+const PaymentRoutes = require('./routes/payment');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
@@ -95,6 +96,7 @@ app.use('/api/admin', adminBookings);
 app.use('/api/sporti/service', bookingRoutes);
 app.use('/api', RoomRoutes);
 app.use('/api', FeedbackRoutes);
+app.use('/api/payment', PaymentRoutes);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
