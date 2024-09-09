@@ -113,7 +113,7 @@ const submitRoomForm = async (req, res) => {
         // sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
 
         bookRoomSMS(formData.phoneNumber);
-       sendRoomPendingEmail(formData)
+        sendRoomPendingEmail(formData)
 
         res.json({ success: true, user: booking });
     } catch (error) {

@@ -31,11 +31,19 @@ const sendSMSConfirmRoom = async (FormData) => {
         const checkInDate = formatDate(FormData.checkIn);
         const checkOutDate = formatDate(FormData.checkOut);
         
+       if(FormData.sporti == 'SPORTI-1'){
         await sendSingleSMS(
-            `Dear Sir, Greetings from SPORTI Bengaluru! Thank you for booking with us. Here are the details of your accommodation: No of Rooms: 01, Room No: 207, Check-in Date: ${checkInDate}, Check-out Date: ${checkOutDate}. Please feel free to reach us at +91-8277945903 / 080-22942137. We wish you a pleasant stay! Team SPORTI`,
-            FormData.mobileNumber,
-            '1107172406257095270'
+            `Dear Sir/Madam, Thank you for booking at SPORTI. Here are the details: Room No:${FormData.selectedRoomNumber} Check-in Date:${checkInDate} Check-out Date:${checkOutDate} Wish you a pleasant stay! For any queries, please contact us at +91 8618363693. Thank you, Team SPORTI -POLMES`,
+            FormData.phoneNumber,
+            '1107172536411064733'
         );
+       }else{
+        await sendSingleSMS(
+            `Dear Sir/Madam, Thank you for booking at SPORTI. Here are the details: Room No:${FormData.selectedRoomNumber} Check-in Date:${checkInDate} Check-out Date:${checkOutDate}Wish you a pleasant stay! For any queries, please contact us at +91 8277945903. Thank you, Team SPORTI -POLMES`,
+            FormData.mobileNumber,
+            '1107172536402943050'
+        );
+       }
     } catch (error) {
         console.error('Error sending SMS:', error);
     }
@@ -86,6 +94,24 @@ const rejectRoomBookingSMS = async(phonenumber) =>{
     }
 }  
 
+//reject sms
+const RoomPaymentSMS = async(FormData) =>{
+    try {
+        // Sending SMS using the template placeholders {#var#}{#var#}
+        await sendSingleSMS(
+            `Dear Sir/Madam, Thank you for choosing to stay at SPORTI. To secure your booking at SPORTI, please complete the payment using the link below: 
+            ${FormData.applicationNo} https://sporti}. 
+            Your booking will be confirmed once payment is received and room availability is verified. 
+            Thank you, Team SPORTI -POLMES`, 
+            FormData.mobileNumber, 
+            '1107172536452274817',  // Template ID
+           
+        );
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+    }
+};
+
 // Function to send a single SMS
 async function sendSingleSMS(message, mobileNumber, templateId) {
     let responseString = "";
@@ -131,29 +157,22 @@ function SHA1(data) {
 
 module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
 // sendSMSConfirmService('9481090986', '01/01/2024')
-// confirmRoom({
-//     "_id": "66c5bdd306e6e80aa12c1b21",
-//     "username": "Bn",
-//     "email": "bhaskar@gmail.com",
-//     "officerDesignation": "IAS",
-//     "officerCadre": "none",
-//     "phoneNumber": "9606729320",
-//     "applicationNo": "90949290c",
-//     "sporti": "SPORTI-1",
-//     "checkIn": "2024-08-21T15:43:00.000Z",
-//     "checkOut": "2024-08-22T15:43:00.000Z",
-//     "serviceName": "Room Booking",
-//     "eventdate": "",
-//     "serviceType": "",
-//     "roomType": "VIP",
-//     "noGuests": "1",
-//     "guestType": "Officers from Karnataka",
-//     "paymentStatus": "Pending",
-//     "totalCost": "1300",
-//     "status": "confirmed",
-//     "rejectionReason": "",
-//     "numberOfDays": 0,
-//     "__v": 0,
-//     "selectedRoomNumber": "03"
-// },'9606729320')
+// sendSMSConfirmRoom({
+//     username: "Bn",
+//     mobileNumber: "9606729320",
+//     sporti: "SPORTI-2",
+//     checkIn: "2024-08-21T15:43:00.000Z",
+//     checkOut: "2024-08-22T15:43:00.000Z",
+//     selectedRoomNumber: "03"
+// })
 // rejectRoomBookingSMS('9606729320')
+// Example call to RoomPaymentSMS
+// RoomPaymentSMS({
+//     username: "Bn",
+//     mobileNumber: "9606729320", // Correct mobile number field
+//     sporti: "SPORTI-2",
+//     checkIn: "2024-08-21T15:43:00.000Z",
+//     checkOut: "2024-08-22T15:43:00.000Z",
+//     selectedRoomNumber: "03",
+//     applicationNo: '145033e2c' // Application number for the payment link
+// });

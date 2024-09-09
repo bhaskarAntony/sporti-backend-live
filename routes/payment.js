@@ -35,5 +35,19 @@ routes.post('/success/info', async (req, res) => {
     }
 });
 
+routes.get('/list', async(req, res)=>{
+    try {
+        const allPayments = await payment.find();
+        res.status(200).json({
+            message:"success",
+            data:allPayments
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:error.message,
+            data:error
+        })
+    }
+})
 
 module.exports = routes;

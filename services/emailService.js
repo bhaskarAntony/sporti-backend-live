@@ -62,11 +62,32 @@ exports.sendRoomPendingEmail = (formData) => {
             <body>
                 <div class="container">
                     <div class="header">
-                        <h1>Booking Request</h1>
+                        <h1>Room Booking Confirmation</h1>
                     </div>
                     <div class="content">
                        
-                        <p>Dear Sir/Madam, Greetings from SPORTI, Bengaluru ! Your ROOM BOOKING request has been received and is under evaluation. It takes 24 hours for confirmation. Booking confirmation SMS will be sent to registered mobile number and mail-id.PLEASE WAIT FOR CONFIRMATION SMS.Thank You - TEAM SPORTI.</p>
+                        <p><p>Dear Sir/Madam </p>
+
+                       <h2> Warm Greetings from SPORTI! </h2>
+
+                       <ul>
+                            <li> Here are the booking request details:</li>
+                            <li> Officers Name : ${formData.username}</li>
+                            <li>Designation :${formData.officerDesignation} </li>
+                            <li>Mobile Number :${formData.phoneNumber} </li>
+                            <li> Cadre :${formData.officerCadre} </li>
+                           
+                            <li> Place : ${formData.sporti} </li>
+                            <li> No of Rooms :1</li>
+                            <li> Check-In Date :${formatDate(formData.checkIn)} </li>
+                            <li>Check-Out Date :${formatDate(formData.checkout)}</li>
+                            <li> No of Persons :${noGuests} </li>
+                            <li>Price ( Including GST ) :&#8377; ${formData.totalCost}</li>
+                       </ul>
+                        </p>
+                        <p> Your booking request is under consideration and will be confirmed within 24 working hours based on rooms availability. </p>
+                        <p> Warm Regards</p>
+                        <p>Team SPORTI</p>
                     </div>
                 </div>
             </body>
@@ -502,7 +523,10 @@ exports.sendPendingEmail = (formData) => {
                             </div>
                             <div class="content">
                                 <p>Dear <strong>${formData.username}</strong>,</p>
-                                <p>This is your online payment link: <a href=${`https://sporti.ksp.gov.in/payment/${formData.applicationNo}`}>Pay Now</a></p>
+                                <p>Dear Sir/Madam, Thank you for choosing to stay at SPORTI. To secure your booking at SPORTI, please complete the payment using the link below: 
+                                <a href=${`https://sporti.ksp.gov.in/payment/${formData.applicationNo}`}>Pay Now</a>. 
+                                Your booking will be confirmed once payment is received and room availability is verified. 
+                                Thank you, Team SPORTI -POLMES</p>
                             </div>
                             <div class="footer">
                                 <p>Thank you</p>
