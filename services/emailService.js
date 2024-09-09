@@ -69,18 +69,19 @@ exports.sendRoomPendingEmail = (formData) => {
                         <p><p>Dear Sir/Madam </p>
 
                        <h2> Warm Greetings from SPORTI! </h2>
+                       <h4> Here are the booking request details:</h4>
 
                        <ul>
-                            <li> Here are the booking request details:</li>
+                           
                             <li> Officers Name : ${formData.username}</li>
                             <li>Designation :${formData.officerDesignation} </li>
                             <li>Mobile Number :${formData.phoneNumber} </li>
-                            <li> Cadre :${formData.officerCadre} </li>
+                            <li> Cadre :${formData.serviceType} </li>
                            
                             <li> Place : ${formData.sporti} </li>
                             <li> No of Rooms :1</li>
                             <li> Check-In Date :${formatDate(formData.checkIn)} </li>
-                            <li>Check-Out Date :${formatDate(formData.checkout)}</li>
+                            <li>Check-Out Date :${formatDate(formData.checkOut)}</li>
                             <li> No of Persons :${formData.noGuests} </li>
                             <li>Price ( Including GST ) :&#8377; ${formData.totalCost}</li>
                        </ul>
