@@ -81,7 +81,7 @@ exports.sendRoomPendingEmail = (formData) => {
                             <li> No of Rooms :1</li>
                             <li> Check-In Date :${formatDate(formData.checkIn)} </li>
                             <li>Check-Out Date :${formatDate(formData.checkout)}</li>
-                            <li> No of Persons :${noGuests} </li>
+                            <li> No of Persons :${formData.noGuests} </li>
                             <li>Price ( Including GST ) :&#8377; ${formData.totalCost}</li>
                        </ul>
                         </p>
