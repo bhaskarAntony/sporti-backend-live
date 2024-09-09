@@ -137,7 +137,7 @@ router.patch('/:id/select-room/:roomId', async (req, res) => {
         }
         bookedRoom.isBooked = true
         bookedRoom.save();
-        confirmRoom(booking);
+        sendSMSConfirmRoom(booking);
         sendRoomConfirmationEmail(booking);
         sendPaymentEmail(booking);
         res.json(booking);
