@@ -40,7 +40,7 @@ const sendSMSConfirmRoom = async (FormData) => {
        }else{
         await sendSingleSMS(
             `Dear Sir/Madam, Thank you for booking at SPORTI. Here are the details: Room No:${FormData.selectedRoomNumber} Check-in Date:${checkInDate} Check-out Date:${checkOutDate}Wish you a pleasant stay! For any queries, please contact us at +91 8277945903. Thank you, Team SPORTI -POLMES`,
-            FormData.mobileNumber,
+            FormData.phoneNumber,
             '1107172536402943050'
         );
        }
