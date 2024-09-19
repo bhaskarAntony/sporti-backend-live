@@ -26,6 +26,7 @@ routes.post('/success/info', async (req, res) => {
             message: 'Payment info saved successfully',
             paymentInfo: data
         });
+        
     } catch (error) {
         // Respond with error and a 500 status code
         res.status(500).json({

@@ -123,12 +123,15 @@ const RoomPaymentSMS = async(FormData) =>{
     try {
         // Sending SMS using the template placeholders {#var#}{#var#}
         await sendSingleSMS(
-            `Dear Sir/Madam, Thank you for choosing to stay at SPORTI. To secure your booking at SPORTI, please complete the payment using the link below: 
-            ${FormData.applicationNo} https://sporti}. 
-            Your booking will be confirmed once payment is received and room availability is verified. 
-            Thank you, Team SPORTI -POLMES`, 
+            `Dear Sir/Madam,
+Thank you for choosing to stay at SPORTI. To secure your booking at SPORTI, please complete the payment using the link below:
+Payment Link: https://www.sporti.ksp.gov.in/payment/72871f5fa
+Your booking will be confirmed once payment is received and room availability is verified.
+Thank you,
+Team SPORTI
+-POLMES`, 
             FormData.mobileNumber, 
-            '1107172536452274817',  // Template ID
+            '1107172536459977393',  // Template ID
            
         );
     } catch (error) {
@@ -179,7 +182,7 @@ function SHA1(data) {
 
 
 
-module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
+// module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
 // sendSMSConfirmService('9481090986', '01/01/2024')
 // sendSMSConfirmRoom({
 //     username: "Bn",
@@ -192,12 +195,12 @@ module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConf
 // rejectRoomBookingSMS('9606729320')
 // bookRoomSMS('9606729320')
 // Example call to RoomPaymentSMS
-// RoomPaymentSMS({
-//     username: "Bn",
-//     mobileNumber: "9606729320", // Correct mobile number field
-//     sporti: "SPORTI-2",
-//     checkIn: "2024-08-21T15:43:00.000Z",
-//     checkOut: "2024-08-22T15:43:00.000Z",
-//     selectedRoomNumber: "03",
-//     applicationNo: '145033e2c' // Application number for the payment link
-// });
+RoomPaymentSMS({
+    username: "Bn",
+    mobileNumber: "9606729320", // Correct mobile number field
+    sporti: "SPORTI-2",
+    checkIn: "2024-08-21T15:43:00.000Z",
+    checkOut: "2024-08-22T15:43:00.000Z",
+    selectedRoomNumber: "03",
+    applicationNo: '145033e2c' // Application number for the payment link
+});
