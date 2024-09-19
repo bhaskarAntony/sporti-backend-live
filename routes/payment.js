@@ -13,13 +13,13 @@ routes.post('/success/info', async (req, res) => {
 
         // Find the booking using applicationNo
         const booking = await servicesBooking.findOne({ applicationNo: data.applicationNo });
-        if (booking) {
-            // Update the payment status and save the booking
-            booking.paymentStatus = "success";
-            await booking.save();  // Save the updated booking
-        } else {
-            throw new Error("Booking not found");
-        }
+        // if (booking) {
+        //     // Update the payment status and save the booking
+        //     booking.paymentStatus = "success";
+        //     await booking.save();  // Save the updated booking
+        // } else {
+        //     throw new Error("Booking not found");
+        // }
 
         // Respond with success
         res.status(200).json({
