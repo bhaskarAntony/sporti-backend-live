@@ -182,7 +182,7 @@ function SHA1(data) {
 
 
 
-// module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
+module.exports = {sendPendingSMS, sendRejectSMS, sendSMSConfirmRoom, sendSMSConfirmService, confirmRoom, confirmMainFunctionHall, bookRoomSMS, rejectRoomBookingSMS}
 // sendSMSConfirmService('9481090986', '01/01/2024')
 // sendSMSConfirmRoom({
 //     username: "Bn",
@@ -195,12 +195,12 @@ function SHA1(data) {
 // rejectRoomBookingSMS('9606729320')
 // bookRoomSMS('9606729320')
 // Example call to RoomPaymentSMS
-RoomPaymentSMS({
-    username: "Bn",
-    mobileNumber: "9606729320", // Correct mobile number field
-    sporti: "SPORTI-2",
-    checkIn: "2024-08-21T15:43:00.000Z",
-    checkOut: "2024-08-22T15:43:00.000Z",
-    selectedRoomNumber: "03",
-    applicationNo: '145033e2c' // Application number for the payment link
-});
+// RoomPaymentSMS({
+//     username: "Bn",
+//     mobileNumber: "9606729320", // Correct mobile number field
+//     sporti: "SPORTI-2",
+//     checkIn: "2024-08-21T15:43:00.000Z",
+//     checkOut: "2024-08-22T15:43:00.000Z",
+//     selectedRoomNumber: "03",
+//     applicationNo: '145033e2c' // Application number for the payment link
+// });

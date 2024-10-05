@@ -27,6 +27,8 @@ function generateShortUniqueId() {
 // Calculate total room cost
 const calculateTotalRoomCost = (formData) => {
     let roomPrice = 0;
+    console.log(formData.roomType);
+    
     switch (formData.roomType) {
         case 'Family':
             roomPrice = formData.serviceType === 'Officers from Karnataka State' ? 1600 :
@@ -90,7 +92,7 @@ const validateBookingForm2 = [
     // body('serviceName').isIn(['Main Function Hall', 'Conference Room', 'Barbeque Area']),
     body('eventdate').isISO8601().toDate(),
     // body('checkOut').isISO8601().toDate(),
-    body('noGuests').isInt({ min: 1 }),
+    body('noRooms').isInt({ min: 1 }),
     body('phoneNumber').isMobilePhone()
 ];
  
@@ -105,22 +107,50 @@ const submitRoomForm = async (req, res) => {
 
     try {
         const formData = req.body;
-        formData.applicationNo = generateShortUniqueId();
-        formData.totalCost = calculateTotalRoomCost(formData);
-        
-        const booking = new Booking(formData);
-        await booking.save();
-        // sendSMS(`hello ${formData.username}, Your booking request has been sent to admin for confirmation and it takes one working day for the same. SMS will be sent to the registered mobile number. please note the acknowledgement number for future reference. ApplicationNo is ${formData.applicationNo}`, formData.phoneNumber);
+        const bookingResponses = []; // To store the response data for each booking
 
-        bookRoomSMS(formData.phoneNumber);
-        sendRoomPendingEmail(formData)
+        // Loop over the number of rooms (noRooms) to create individual booking entries
+        for (let i = 0; i < formData.noRooms; i++) {
+            // Create a separate booking for each room
+            console.log(calculateTotalRoomCost(formData));
+            
+            const bookingData = {
+                ...formData,
+                applicationNo: generateShortUniqueId(), // Generate unique ID for each room booking
+                totalCost: calculateTotalRoomCost(formData) // Calculate total cost for each room booking
+            };
 
-        res.json({ success: true, user: booking });
+            // Create and save the booking
+            const booking = new Booking(bookingData);
+            await booking.save(); // Save the booking for each room individually
+
+            // Send SMS and email for each room booking
+            bookRoomSMS(bookingData.phoneNumber);
+            sendRoomPendingEmail(bookingData);
+
+            // Add booking response to the array
+            bookingResponses.push({
+                room: i + 1,
+                applicationNo: bookingData.applicationNo,
+                totalCost: bookingData.totalCost,
+                status: 'Pending confirmation'
+            });
+
+            console.log(`Booking created for Room ${i + 1}:`, bookingData);
+        }
+
+        // Return success response with all room booking data
+        res.json({ 
+            success: true, 
+            message: `${formData.noRooms} room bookings submitted successfully!`, 
+            bookings: bookingResponses 
+        });
     } catch (error) {
         console.error('Error submitting room form:', error.message);
         res.status(500).json({ success: false, error: 'An error occurred while submitting the room form.' });
     }
 };
+
 
 // Submit service form
 const submitServiceForm = async (req, res) => {

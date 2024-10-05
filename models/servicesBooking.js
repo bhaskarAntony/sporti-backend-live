@@ -14,7 +14,7 @@ const BookingSchema = new mongoose.Schema({
     eventdate:String,
     serviceType: String,
     roomType:String,
-    noGuests:String,
+    noRooms:String,
     guestType:String,
     paymentStatus: {
         type: String,
@@ -38,6 +38,12 @@ const BookingSchema = new mongoose.Schema({
     },
     roomId:{
         type:String,
+    },
+    lastCheckOut:{
+        type:String,
+    },
+    isCheckout:{
+        type:Boolean
     }
 
 });

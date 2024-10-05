@@ -59,6 +59,7 @@ router.patch('/:id/confirm', async (req, res) => {
         }
 
         booking.status = 'confirmed';
+        booking.isCheckout = false;
         booking.roomId=req.params.id;
         // sendConfirmationEmail(booking)
         // sendSMS(`Hello ${booking.username}, Your booking request has been approved from admin team. Thank you. Please contact SPORTI team for`, booking.phoneNumber)
@@ -111,6 +112,37 @@ router.patch('/:id/remove/payment', async (req, res) => {
     } catch (error) {
         // Handle potential errors
         res.status(500).json({ message: 'An error occurred while updating payment status', error: error.message });
+    }
+});
+
+router.patch('/:id/checkout', async (req, res) => {
+    const data = req.body;
+    try {
+        const booking = await Booking.findById(req.params.id);
+
+        // Check if the booking exists
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        // Update the payment status to 'pending'
+        booking.lastCheckOut = data.date;
+        booking.isCheckout = true;
+        await booking.save();
+        const room = await Room.findById(booking.roomId);
+        if(room){
+            room.isBooked = false;
+            room.save();
+        }
+
+        // Send the updated booking as a response
+        res.status(200).json({
+            message: 'Room CheckOut is Done',
+            booking
+        });
+    } catch (error) {
+        // Handle potential errors
+        res.status(500).json({ message: 'An error occurred while check out', error: error.message });
     }
 });
 
