@@ -6,6 +6,24 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
+
+router.get('/members/list', async (req, res) => {
+  try {
+    // Get user ID from the request parameters
+
+    // Find user by ID
+    const users = await User.find();
+
+   
+
+    // Return the user data as a response
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 router.get('/user/:id', async (req, res) => {
     try {
       // Get user ID from the request parameters

@@ -12,7 +12,7 @@ const secret = process.env.JWT_SECRET || 'your-default-secret-key';
 const registerValidation = [
     body('username').isString().notEmpty().withMessage('Username is required'),
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
-    body('role').isIn(['sporti1', 'sporti2', 'super_admin']).withMessage('Invalid role')
+    // body('role').isIn(['sporti1', 'sporti2', 'super_admin']).withMessage('Invalid role')
 ];
 
 // Register route

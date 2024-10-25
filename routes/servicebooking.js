@@ -10,9 +10,9 @@ const Room = require('../models/Room');
 router.post('/service/book', submitServiceForm);
 router.post('/room/book', submitRoomForm);
 router.get('/booking/:applicationNo', getBookingByApplicationNo);
-router.delete('/delete/booking/:applicationNo', deleteBooking);
+router.delete('/delete/booking/:id', deleteBooking);
 router.put('/update/booking/:applicationNo', updateBooking);
-// routes/bookings.js
+//routes/bookings.js
 
 // Reject a booking
 
