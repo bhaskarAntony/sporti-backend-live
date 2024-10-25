@@ -206,36 +206,37 @@ const updateBooking = async (req, res) => {
 // Delete booking
 const deleteBooking = async (req, res) => {
     try {
-      const { applicationNo } = req.params;
+        const { id } = req.params;
+        console.log(req.params);
   
-      // Find the booking by applicationNo
-      const booking = await Booking.findOne({ applicationNo });
-      
+        // Find the booking by _id (using findById directly)
+        const booking = await Booking.findById(id);
+        console.log(booking);
+        
+        if (!booking) {
+            return res.status(404).json({ success: false, error: 'Booking not found' });
+        }
   
-      if (!booking) {
-        return res.status(404).json({ success: false, error: 'Booking not found' });
-      }
-  
-      // Find the associated room by roomId
-      const room = await Room.findById(booking.roomId);
-  
-      if (room) {
-        room.isBooked = false;
-        await room.save();
-      }
-  
-      // Update the room's isBooked status to false
-     
-  
-      // Delete the booking
-      const deletedBooking = await Booking.findOneAndDelete({ applicationNo });
-  
-      res.json({ success: true, deletedBooking, room });
+        // Check booking status and associated room
+        if (booking.status === 'confirmed') {
+            const room = await Room.findById(booking.roomId);
+            if (room) {
+                room.isBooked = false;
+                await room.save();
+            }
+
+            const deletedBooking = await Booking.findByIdAndDelete(id);
+            return res.json({ success: true, deletedBooking, room });
+        } else {
+            const deletedBooking = await Booking.findByIdAndDelete(id);
+            return res.json({ success: true, deletedBooking });
+        }
     } catch (error) {
-      console.error('Error deleting booking:', error.message);
-      res.status(500).json({ success: false, error: 'An error occurred while deleting the booking.' });
+        console.error('Error deleting booking:', error.message);
+        res.status(500).json({ success: false, error: 'An error occurred while deleting the booking.' });
     }
-  };
+};
+
   
 
 // Get booking by application number
