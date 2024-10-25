@@ -206,10 +206,10 @@ const updateBooking = async (req, res) => {
 // Delete booking
 const deleteBooking = async (req, res) => {
     try {
-      const { id } = req.params;
+      const { applicationNo } = req.params;
   
       // Find the booking by applicationNo
-      const booking = await Booking.findById(id);
+      const booking = await Booking.findOne({ applicationNo });
       
   
       if (!booking) {
