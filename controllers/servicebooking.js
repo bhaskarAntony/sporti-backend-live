@@ -98,37 +98,27 @@ const validateBookingForm2 = [
  
 // Submit room form
 const submitRoomForm = async (req, res) => {
-    await Promise.all(validateBookingForm.map(validation => validation.run(req)));
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
         const formData = req.body;
-        const bookingResponses = []; // To store the response data for each booking
+        const bookingResponses = [];
 
-        // Loop over the number of rooms (noRooms) to create individual booking entries
         for (let i = 0; i < formData.noRooms; i++) {
-            // Create a separate booking for each room
-            console.log(calculateTotalRoomCost(formData));
-            
+            const applicationNo = generateShortUniqueId(); // Unique ID for applicationNo
             const bookingData = {
                 ...formData,
-                applicationNo: generateShortUniqueId(), // Generate unique ID for each room booking
-                totalCost: calculateTotalRoomCost(formData) // Calculate total cost for each room booking
+                applicationNo,
+                totalCost: calculateTotalRoomCost(formData)
             };
 
-            // Create and save the booking
+            // Create and save a new Booking instance for each room
             const booking = new Booking(bookingData);
-            await booking.save(); // Save the booking for each room individually
+            await booking.save();
 
-            // Send SMS and email for each room booking
+            // Send SMS and email notifications
             bookRoomSMS(bookingData.phoneNumber);
             sendRoomPendingEmail(bookingData);
 
-            // Add booking response to the array
+            // Append booking response
             bookingResponses.push({
                 room: i + 1,
                 applicationNo: bookingData.applicationNo,
@@ -138,18 +128,23 @@ const submitRoomForm = async (req, res) => {
 
             console.log(`Booking created for Room ${i + 1}:`, bookingData);
         }
-
-        // Return success response with all room booking data
+        // Respond with success and booking details
         res.json({ 
             success: true, 
             message: `${formData.noRooms} room bookings submitted successfully!`, 
             bookings: bookingResponses 
         });
     } catch (error) {
-        console.error('Error submitting room form:', error.message);
-        res.status(500).json({ success: false, error: 'An error occurred while submitting the room form.' });
+        console.error('Error submitting room form:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'An error occurred while submitting the room form.',
+            data: error
+        });
     }
 };
+
+
 
 
 // Submit service form
@@ -186,9 +181,9 @@ const updateBooking = async (req, res) => {
         const formData = req.body;
 
         // Sanitize the form data
-        Object.keys(formData).forEach(key => {
-            formData[key] = sanitizeInput(formData[key]);
-        });
+        // Object.keys(formData).forEach(key => {
+        //     formData[key] = sanitizeInput(formData[key]);
+        // });
 
         const updatedBooking = await Booking.findOneAndUpdate({ applicationNo }, formData, { new: true });
 
@@ -196,9 +191,11 @@ const updateBooking = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Application number not found' });
         }
 
+          // Send SMS and email for each room booking
+          bookRoomSMS(formData.phoneNumber);
+          sendRoomPendingEmail(formData);
         // Send confirmation email
-        emailService.sendConfirmationEmail(formData);
-
+        // emailService.sendConfirmationEmail(formData);
         res.json({ success: true, updatedBooking });
     } catch (error) {
         console.error('Error updating booking:', error.message);

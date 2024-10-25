@@ -6,7 +6,7 @@ const BookingSchema = new mongoose.Schema({
     officerDesignation:String,
     officerCadre:String,
     phoneNumber: String,
-    applicationNo:String,
+    applicationNo: { type: String},
     sporti: String,
     checkIn: Date,
     checkOut: Date,

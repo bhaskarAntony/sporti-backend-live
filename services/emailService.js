@@ -16,6 +16,89 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+exports.sendNewMembershipEmail = (formData) => {
+    const mailOptions = {
+        from: 'sportigov@gmail.com',
+        to: formData.email,
+        subject: 'SPORTI Membership Details',
+        html: `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>New SPORTI Member</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        background-color: #f9f9f9;
+                    }
+                    .header {
+                        text-align: center;
+                        padding-bottom: 20px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                    .header h1 {
+                        margin: 0;
+                    }
+                    .content {
+                        padding-top: 20px;
+                    }
+                    .footer {
+                        text-align: center;
+                        padding-top: 20px;
+                        border-top: 1px solid #ddd;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Now you are SPORTI member</h1>
+                    </div>
+                    <div class="content">
+                       
+                        <p><p>Dear Sir/Madam </p>
+
+                       <h2> Warm Greetings from SPORTI! </h2>
+                       <h4> Here are the your membership details:</h4>
+                       <ul>
+                           
+                            <li> Officers Name : ${formData.name}</li>
+                            <li>Email :${formData.email} </li>
+                            <li>Password:${formData.password} </li>
+                       </ul>
+                        </p>
+                        <p> id any details missing please visit to <a href="https://www.sporti.ksp.gov.in">SPORTI Official website</a>  and edit your details</p>
+                        <hr>
+                        <p> Warm Regards</p>
+                        <p>Team SPORTI</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `
+    };
+
+   
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    });
+};
+
 exports.sendRoomPendingEmail = (formData) => {
     const mailOptions = {
         from: 'sportigov@gmail.com',

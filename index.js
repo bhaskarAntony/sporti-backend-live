@@ -67,7 +67,8 @@ app.use(xss());
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'http://localhost:3001',
+    'http://localhost:3004',
+    'http://localhost:3002',
     'http://localhost:4000',
     'https://sporti-admin.vercel.app',
     'https://sporti-admin.vercel.app/bookings',

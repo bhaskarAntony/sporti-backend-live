@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 // Middleware to authenticate token
-const authenticateToken = (req, res, next) => {
+exports.authenticateToken = (req, res, next) => {
   const token = req.cookies.token || req.headers['authorization']?.split(' ')[1];
   console.log('Token:', token);
 
@@ -19,4 +19,4 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken };
+// module.exports = { authenticateToken };
