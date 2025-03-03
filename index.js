@@ -35,7 +35,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' data:; " +
     "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; " +
-    "connect-src 'self' http://localhost:3000 http://localhost:4000 http://localhost:3001 http://localhost:5000 https://www.sporti.ksp.gov.in https://sporti-admin.vercel.app https://sporti-services-backend.onrender.com https://sporti2.vercel.app; " +
+    "connect-src 'self' http://localhost:3000 http://localhost:4000 http://localhost:3001 http://localhost:5000 https://www.sporti.ksp.gov.in https://sporti-admin.vercel.app https://sporti-backend-live-3.onrender.com https://sporti2.vercel.app; " +
     "frame-ancestors 'none';"
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
