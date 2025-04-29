@@ -82,6 +82,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
+app.options('/*name', cors()); // Handle preflight for all routes
 app.use(cors())
 
 
