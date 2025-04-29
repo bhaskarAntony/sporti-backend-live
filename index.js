@@ -35,7 +35,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "img-src 'self' data:; " +
     "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; " +
-    "connect-src 'self' http://localhost:3000 http://localhost:4000 http://localhost:3001 http://localhost:5000 https://www.sporti.ksp.gov.in https://sporti-admin.vercel.app https://sporti-backend-live-3.onrender.com https://sporti2.vercel.app; " +
+    "connect-src 'self' http://localhost:3001 http://localhost:4000 http://localhost:3006 http://localhost:5000 https://www.sporti.ksp.gov.in https://sporti-admin.vercel.app https://sporti-backend-live-3.onrender.com https://sporti2.vercel.app; " +
     "frame-ancestors 'none';"
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -61,15 +61,15 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 app.use(cookieParser('your-secret-key'));
 app.use(express.json());
 app.use(mongoSanitize());
-app.use(xss());
+// app.use(xss());
 
-// CORS configuration
+// // CORS configuration
 app.use(cors({
   origin: [
-    'http://localhost:3000',
+    'http://localhost:3001',
     'http://localhost:3004',
     'http://localhost:3002',
-    'http://localhost:4000',
+    'http://localhost:3006',
     'https://sporti-admin.vercel.app',
     'https://sporti-admin.vercel.app/bookings',
     'https://www.sporti.ksp.gov.in',
@@ -82,6 +82,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
+app.use(cors())
+
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -98,6 +100,8 @@ app.use('/api/sporti/service', bookingRoutes);
 app.use('/api', RoomRoutes);
 app.use('/api', FeedbackRoutes);
 app.use('/api/payment', PaymentRoutes);
+
+app.use(cors());
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
