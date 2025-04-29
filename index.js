@@ -74,15 +74,15 @@ app.use(cors({
     'https://sporti-admin.vercel.app/bookings',
     'https://www.sporti.ksp.gov.in',
     'https://sporti2.vercel.app',
-    'https://www.sporti.ksp.gov.in/login',
-    'https://sporti-admin.vercel.app/login',
+    'https://sporti2.vercel.app/login',
+    'https://www.https://sporti2.vercel.app/login',
     'https://sporti-admin.vercel.app/dashboard',
     'https://sporti-admin.vercel.app/bookings',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
-app.options('/*name', cors()); // Handle preflight for all routes
+// app.options('/*name', cors()); // Handle preflight for all routes
 app.use(cors())
 
 
