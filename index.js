@@ -67,6 +67,8 @@ app.use(
         'https://sporti-backend-live-p00l.onrender.com',
         'https://sporti-admin.vercel.app',
         'https://sporti2.vercel.app',
+        'https://www.sporti.ksp.gov.in',
+        
         'https://www.sport backend code is using jwt authentication so give code for that with all the files needed for backend and also update the frotend code accordingly. i.ksp.gov.in',
       ],
       frameAncestors: ["'none'"],
